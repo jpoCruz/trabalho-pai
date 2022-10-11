@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter.filedialog import askopenfile
+from tkinter import filedialog
+import os
 from PIL import Image, ImageTk
 
 #
@@ -29,10 +30,12 @@ def comando():
     pass
 
 def abrir_imagem():
-    file = askopenfile(parent=root, mode='rb',title="Escolha uma imagem", filetype=[("Image file", "*.png")])
+    file = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     if file:
-        pass #atualizar imagem na tela
-
+        img = Image.open(file)
+        img = ImageTk.PhotoImage(img)
+        imagem_label.configure(image=img)
+        imagem_label.image=img
 
 #Menu
 menu = tk.Menu(root)
