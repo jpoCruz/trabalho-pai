@@ -13,8 +13,9 @@ import cv2 #pip install opencv-python
 # Campus Coração Eucarístico
 #
 # Trabalho Final de Processamento e Análise de Imagens
+# Primeira Entrega
 #
-# Iago - 
+# Iago Morgado - 618090
 # João Paulo Oliveira Cruz - 615932
 # Pedro Rodrigues - 594451
 #
@@ -30,9 +31,92 @@ info = tk.Frame(root, width=240, height=480, bg="#b3b3b3")
 info.grid(row = 0, column=2)
 info.place(x=400)
 
-#Comandos
+#################################### FUNÇÕES ####################################
+
 def comando():
     pass
+
+
+def buscarUltimoRecorte():
+
+    metodo = cv2.TM_SQDIFF_NORMED # escolhe o metodo de correlacao (diferença quadrática normalizada)
+
+    # procura a variavel imgCorte na memória
+    try:
+        imgCorte
+    except NameError: # se ela não existir, abre a imagem "crop.png" na raiz
+        recorte = cv2.imread("crop.png")
+    else:
+        recorte = imgCorte.copy() #se ela existir, pega ela da memória
+
+    arquivo = file
+    imagem = cv2.imread(arquivo)    
+
+    # usa o opencv para buscar a ocorrência mais próxima do recorte na imagem aberta
+    # usando a correlação escolhida 
+    busca = cv2.matchTemplate(recorte, imagem, metodo)
+
+    # queremos a similaridade numerica e as coordenadas do minimo local
+    min,max,mnLocCoord,_ = cv2.minMaxLoc(busca)
+
+    # print(cv2.minMaxLoc(busca))
+
+    # extrai as cooredenadas do melhor match
+    tx,ty = mnLocCoord
+
+    # recupera tamanho do recorte
+    tlin,tcol = recorte.shape[:2]
+
+    # desenha o retangulo na imagem grande (escolhe a cor do retangulo dependendo da similaridade aproximada)
+    if min == 0:
+        cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 0),2)
+    elif min <= 0.0175:
+        cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 255),2)
+    else:
+        cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 0, 255),2)
+    
+    # mostra a imagem grande com o match em volta
+    cv2.imshow('Resultado',imagem)
+    cv2.waitKey(0)
+
+
+def buscarRecorte():
+    # perguntar qual arquivo
+    recorte = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem do recorte", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+
+    metodo = cv2.TM_SQDIFF_NORMED # escolhe o método de correlação (diferença quadrática normalizada)
+
+    arquivo = file
+    imagem = cv2.imread(arquivo)
+    recorte = cv2.imread(recorte)
+
+    # usa o opencv para buscar a ocorrência mais próxima do recorte na imagem aberta
+    # usando a correlação escolhida 
+    busca = cv2.matchTemplate(recorte, imagem, metodo)
+
+    # queremos a similaridade numerica e as coordenadas do minimo local
+    min,max,mnLocCoord,_ = cv2.minMaxLoc(busca)
+
+    # print(cv2.minMaxLoc(busca))
+
+    # extrai as cooredenadas do melhor match
+    tx,ty = mnLocCoord
+
+    # recupera tamanho do recorte
+    tlin,tcol = recorte.shape[:2]
+
+    # desenha o retangulo na imagem grande (escolhe a cor do retangulo dependendo da similaridade aproximada)
+    if min == 0:
+        cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 0),2)
+    elif min <= 0.0175:
+        cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 255),2)
+    else:
+        cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 0, 255),2)
+    
+    # mostra a imagem grande com o match em volta
+    cv2.imshow('Resultado',imagem)
+    cv2.waitKey(0)
+
 
 def abrir_imagem():
     global file
@@ -40,77 +124,85 @@ def abrir_imagem():
     file = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     if file:
         img = Image.open(file)
-        tam, tam = img.size # Recuperando tamanho da imagem para seu posicionamento na interface
+        tam, tam = img.size # recuperando tamanho da imagem para seu posicionamento na interface
         img = ImageTk.PhotoImage(img)
         imagem_label.configure(image=img)
         imagem_label.image=img
         imagem_label.grid(column = 1, row = 0)
+
+        # centraliza a imagem na hora de colocar ela
         if tam == 224:
-            imagem_label.place(x=86, y=80) # Imagem 224x224
-        else :
-            imagem_label.place(x=49, y=43) # Imagem 299x299
+            imagem_label.place(x=86, y=80) # imagem 224x224
+        elif tam == 299:
+            imagem_label.place(x=49, y=43) # imagem 299x299
+        else:
+            imagem_label.place(x=10, y = 10) # imagem esquisita fora do padrão
 
 
-coord = []# Armazena as coordenadas de corte da imagem
+coord = [] # armazena as coordenadas de corte da imagem
 def recorte_imagem(event, x, y, flags, param):
 	global coord
 
-	if event == cv2.EVENT_LBUTTONDOWN:# Se o botão esquerdo do mouse foi segurado, x e y iniciais são gravados
+	if event == cv2.EVENT_LBUTTONDOWN: # se o botão esquerdo do mouse foi segurado, x e y iniciais são gravados
 		coord = [(x, y)]
-	elif event == cv2.EVENT_LBUTTONUP:# Verifica se soltou o clique do botão esquerdo do mouse, x e y finais são gravados
+	elif event == cv2.EVENT_LBUTTONUP: # verifica se soltou o clique do botão esquerdo do mouse, x e y finais são gravados
 		coord.append((x, y))		
-		cv2.rectangle(imgCrop, coord[0], coord[1], 0, 2)# Desenha um retângulo na região marcada de acordo com (x, y) inciais e finais 
+		cv2.rectangle(imgCrop, coord[0], coord[1], 0, 2) # desenha um retângulo na região marcada de acordo com (x, y) inciais e finais 
+
 
 def recorte():
     global imgCrop
+    global imgCorte
     imgCrop = cv2.imread(file)
-    clone = imgCrop.copy()# Um clone da imagem original é criado para que possamos mudar a região de corte se necessário, 
-                          # e a imagem original estará sem alterações pois as manipulações de corte ocorrerão no clone
-    cv2.namedWindow("Recorte de Imagem")# Label para identifação da tela de recorte
-    cv2.setMouseCallback("Recorte de Imagem", recorte_imagem)# Função de "escutar" o mouse
+    clone = imgCrop.copy() # um clone da imagem original é criado para que possamos mudar a região de corte se necessário, 
+                           # e a imagem original estará sem alterações pois as manipulações de corte ocorrerão no clone
+    cv2.namedWindow("Recorte de Imagem") # Label para identifação da tela de recorte
+    cv2.setMouseCallback("Recorte de Imagem", recorte_imagem) # Função de "escutar" o mouse
 
     while True:
-        cv2.imshow("Recorte de Imagem", imgCrop)# Mostra a imagem e espera a tecla correta para recortar
+        cv2.imshow("Recorte de Imagem", imgCrop) # mostra a imagem e espera a tecla correta para recortar
         key = cv2.waitKey(1)
 
-        if key == ord("0"):# Apertando "0" no teclado, o corte é resetado e outro pode ser escolhido
-            imgCrop = clone.copy()# Para recuperar a imagem sem o retângulo, recuperamos pelo clone
-        elif key == ord("1"):# Apertando "1" no teclado, a imagem é cortada
+        if key == ord("0"): # apertando "0" no teclado, o corte é resetado e outro pode ser escolhido
+            imgCrop = clone.copy() # para recuperar a imagem sem o retângulo, recuperamos pelo clone
+        elif key == ord("1"): # apertando "1" no teclado, a imagem é cortada
             break
 
-    if len(coord) == 2:# Se houverem duas coordenadas e saimos do loop, a imagem foi cortada
-        corte = clone[coord[0][1]:coord[1][1], coord[0][0]:coord[1][0]]# Corte é feito na imagem clone a partir das coordenadas armazenadas
-        cv2.imshow("Corte", corte)
-        cv2.waitKey(0);
+    corte = clone[coord[0][1]:coord[1][1], coord[0][0]:coord[1][0]] # corte é feito na imagem clone a partir das coordenadas armazenadas
 
-    cv2.imwrite('crop.png', corte)# Imagem cortada é salva no diretório local
+    imgCorte = corte.copy()
 
+    cv2.imshow("Corte", corte)
+    cv2.waitKey(0)
+
+    cv2.imwrite('crop.png', corte) # imagem cortada é salva no diretório local
+
+
+#################################### INTERFACE ####################################
 
 menu = tk.Menu(root)
 root.config(menu = menu)
 
-#Ler
+#ler
 file_menu = tk.Menu(menu)
 menu.add_cascade(label="Ler", menu=file_menu)
 file_menu.add_command(label="Imagem", command=abrir_imagem)
 file_menu.add_command(label="Diretório", command=comando)
 
-#Processamento
+#processamento
 process_menu = tk.Menu(menu)
 menu.add_cascade(label="Processamento", menu=process_menu)
-process_menu.add_command(label="Recortar e salvar como...", command=recorte)
-process_menu.add_command(label="Buscar do último recorte", command=comando)
-process_menu.add_command(label="Buscar de um arquivo", command=comando)
+process_menu.add_command(label="Recortar e salvar recorte na raiz", command=recorte)
+process_menu.add_command(label="Buscar do último recorte", command=buscarUltimoRecorte)
+process_menu.add_command(label="Buscar de um arquivo", command=buscarRecorte)
 
-#Classificadores
+#classificadores
 classif_menu = tk.Menu(menu)
 menu.add_cascade(label="Classificadores", menu=classif_menu)
 classif_menu.add_command(label="Escolher Classificador", command=comando)
 classif_menu.add_command(label="Treinar Classificador", command=comando)
 
-#------------------------------------------------------------------------------------------#
-
-#Imagem inicial
+#imagem inicial
 imagem = Image.open('vazio.png')
 imagem = ImageTk.PhotoImage(imagem)
 imagem_label = tk.Label(image=imagem)
