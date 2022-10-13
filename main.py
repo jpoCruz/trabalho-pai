@@ -39,7 +39,7 @@ def comando():
 
 def buscarUltimoRecorte():
 
-    metodo = cv2.TM_SQDIFF_NORMED # escolhe o metodo de correlacao (diferença quadrática normalizada)
+    metodo = cv2.TM_CCORR_NORMED # escolhe o metodo de correlacao (correlação cruzada normalizada)
 
     # procura a variavel imgCorte na memória
     try:
@@ -57,20 +57,20 @@ def buscarUltimoRecorte():
     busca = cv2.matchTemplate(recorte, imagem, metodo)
 
     # queremos a similaridade numerica e as coordenadas do minimo local
-    min,max,mnLocCoord,_ = cv2.minMaxLoc(busca)
+    min,max,mnLocCoord,mxLocCoord = cv2.minMaxLoc(busca)
 
-    # print(cv2.minMaxLoc(busca))
+    print(cv2.minMaxLoc(busca))
 
     # extrai as cooredenadas do melhor match
-    tx,ty = mnLocCoord
+    tx,ty = mxLocCoord
 
     # recupera tamanho do recorte
     tlin,tcol = recorte.shape[:2]
 
     # desenha o retangulo na imagem grande (escolhe a cor do retangulo dependendo da similaridade aproximada)
-    if min == 0:
+    if (max == 1):
         cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 0),2)
-    elif min <= 0.0175:
+    elif max >= 0.99:
         cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 255),2)
     else:
         cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 0, 255),2)
@@ -84,7 +84,7 @@ def buscarRecorte():
     # perguntar qual arquivo
     recorte = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem do recorte", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
 
-    metodo = cv2.TM_SQDIFF_NORMED # escolhe o método de correlação (diferença quadrática normalizada)
+    metodo = cv2.TM_CCORR_NORMED # escolhe o metodo de correlacao (correlação cruzada normalizada)
 
     arquivo = file
     imagem = cv2.imread(arquivo)
@@ -95,20 +95,20 @@ def buscarRecorte():
     busca = cv2.matchTemplate(recorte, imagem, metodo)
 
     # queremos a similaridade numerica e as coordenadas do minimo local
-    min,max,mnLocCoord,_ = cv2.minMaxLoc(busca)
+    min,max,mnLocCoord,mxLocCoord = cv2.minMaxLoc(busca)
 
-    # print(cv2.minMaxLoc(busca))
+    print(cv2.minMaxLoc(busca))
 
     # extrai as cooredenadas do melhor match
-    tx,ty = mnLocCoord
+    tx,ty = mxLocCoord
 
     # recupera tamanho do recorte
     tlin,tcol = recorte.shape[:2]
 
     # desenha o retangulo na imagem grande (escolhe a cor do retangulo dependendo da similaridade aproximada)
-    if min == 0:
+    if (max == 1):
         cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 0),2)
-    elif min <= 0.0175:
+    elif max >= 0.99:
         cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 255, 255),2)
     else:
         cv2.rectangle(imagem, (tx,ty),(tx+tcol,ty+tlin),(0, 0, 255),2)
