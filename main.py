@@ -2,7 +2,9 @@ from re import X
 import tkinter as tk
 from tkinter import filedialog
 import os
+from os import listdir
 from PIL import Image, ImageTk
+from pathlib import Path
 import mouse
 from pynput import mouse #pip install pynput
 import cv2 #pip install opencv-python
@@ -119,9 +121,10 @@ def buscarRecorte():
 
 
 def abrir_imagem():
-    global file
+    global file #!!
 
     file = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+
     if file:
         img = Image.open(file)
         tam, tam = img.size # recuperando tamanho da imagem para seu posicionamento na interface
@@ -141,7 +144,7 @@ def abrir_imagem():
 
 coord = [] # armazena as coordenadas de corte da imagem
 def recorte_imagem(event, x, y, flags, param):
-	global coord
+	global coord #!!
 
 	if event == cv2.EVENT_LBUTTONDOWN: # se o botão esquerdo do mouse foi segurado, x e y iniciais são gravados
 		coord = [(x, y)]
@@ -151,8 +154,8 @@ def recorte_imagem(event, x, y, flags, param):
 
 
 def recorte():
-    global imgCrop
-    global imgCorte
+    global imgCrop #!!
+    global imgCorte #!!
     imgCrop = cv2.imread(file)
     clone = imgCrop.copy() # um clone da imagem original é criado para que possamos mudar a região de corte se necessário, 
                            # e a imagem original estará sem alterações pois as manipulações de corte ocorrerão no clone
@@ -178,6 +181,43 @@ def recorte():
     cv2.imwrite('crop.png', corte) # imagem cortada é salva no diretório local
 
 
+#################################### TREINO  ######################################
+
+
+def escolher_caminho():
+
+    global caminho_pasta #!!
+
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+
+    #file_caminho = file_caminho.replace("\\", "/")
+    result = Path(file_caminho).parent.parent.parent.parent
+
+    caminho_pasta = str(result)
+
+    #caminho_pasta = caminho_pasta.replace("\\", "/")
+    print(caminho_pasta)
+
+
+def treinar_classificador():
+
+    print("dentro do classificador")
+    print(caminho_pasta)
+
+    treino244 = caminho_pasta + "\\kneeKL244\\test\\"
+    treino299 = caminho_pasta + "\\kneeKL299\\test\\"
+
+    for i in range(5):
+        pasta = treino244 + str(i)
+        print(pasta)
+
+        caminho = repr(pasta)[1:-1]
+
+        for imagem in os.listdir(caminho):
+            if (imagem.endswith(".png")):
+                print(imagem)
+
+
 #################################### INTERFACE ####################################
 
 menu = tk.Menu(root)
@@ -199,8 +239,9 @@ process_menu.add_command(label="Buscar de um arquivo", command=buscarRecorte)
 #classificadores
 classif_menu = tk.Menu(menu)
 menu.add_cascade(label="Classificadores", menu=classif_menu)
+classif_menu.add_command(label="Escolher Caminho a partir de imagem", command=escolher_caminho)
 classif_menu.add_command(label="Escolher Classificador", command=comando)
-classif_menu.add_command(label="Treinar Classificador", command=comando)
+classif_menu.add_command(label="Treinar Classificador", command=treinar_classificador)
 
 #imagem inicial
 imagem = Image.open('vazio.png')
