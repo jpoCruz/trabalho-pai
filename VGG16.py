@@ -72,5 +72,7 @@ def getModel():
 
     model.add(layers.Dense(10, activation='softmax'))
     model.summary()
+    
+    model.compile(optimizer='adam', loss=losses.sparse_categorical_crossentropy, metrics=['accuracy'])
 
 getModel()
