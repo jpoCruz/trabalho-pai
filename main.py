@@ -5,8 +5,8 @@ import os
 from os import listdir
 from PIL import Image, ImageTk
 from pathlib import Path
-import mouse
-from pynput import mouse #pip install pynput
+#import mouse
+#from pynput import mouse #pip install pynput
 import cv2 #pip install opencv-python
 
 
