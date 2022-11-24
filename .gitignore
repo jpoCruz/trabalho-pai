@@ -1,3 +1,7 @@
 fotos/
 KneeXrayData/
-knee.pickle
+__pycache__/
+knee_test.pickle
+knee_train.pickle
+knee_val.pickle
+

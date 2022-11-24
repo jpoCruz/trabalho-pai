@@ -6,6 +6,8 @@ import os #para interagir com o resto da máquina
 from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
+from util import load_data
+import matplotlib.pyplot as plt
 
 
 #
@@ -219,16 +221,18 @@ def escolher_caminho():
 def treinar_classificador():
 
     print("[!] Entrando no método de treinar classificador")
+    feature, label = load_data(caminho_treino,caminho_treino)
+    
+    """plt.figure(figsize=(8,8))
 
-    for i in range(5):
-        pasta = caminho_teste / str(i)
-        print("- Caminho atual com numeração: ")
-        print(pasta)
+    for i in range(25):
+        plt.subplot(5,5,i+1)
+        plt.imshow(feature[i])
+        plt.text(5,0,s=label[i])
+        plt.xticks([])
 
-        for imagem in os.listdir(pasta):
-            if (imagem.endswith(".png")):
-                print(imagem)
-        print("")
+    plt.show()"""
+
         
 
 

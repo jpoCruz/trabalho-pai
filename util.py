@@ -8,9 +8,7 @@ from pathlib import Path
 categories=['0','1','2','3','4']
 data=[]
 
-def make_train_data(data_dir,data_dir_2):
-        #data_dir='./KneeXrayData/KneeXrayData/ClsKLData/kneeKL224/train'
-        #data_dir_2='./KneeXrayData/KneeXrayData/ClsKLData/kneeKL299/train'
+def make_data(data_dir,data_dir_2):
         for category in categories:
                 path = os.path.join(data_dir,category)
                 path_2=os.path.join(data_dir_2,category)
@@ -51,11 +49,19 @@ def make_train_data(data_dir,data_dir_2):
                 pickle.dump(data,pik)
                 pik.close()
 
-def load_train_data(data_dir,data_dir_2):
-        make_train_data(data_dir,data_dir_2)
-        pick=open('knee_train.pickle','rb')
-        data_= pickle.load(pick)
-        pick.close()
+def load_data(data_dir,data_dir_2):
+        make_data(data_dir,data_dir_2)
+        
+        if(data_dir.stem=='train'):
+                pick = open('knee_train.pickle','rb')
+        elif (data_dir.stem=='test'):
+                pick = open('knee_test.pickle','rb')
+        elif(data_dir.stem=='val'):
+                pick = open('knee_val.pickle','rb')
+        
+        if(pick!=None):
+                data_= pickle.load(pick)
+                pick.close()
 
         feature=[]
         labels=[]
@@ -68,14 +74,3 @@ def load_train_data(data_dir,data_dir_2):
         labels=np.array(labels)
 
         return[feature,labels]
-
-#feature, label = load_train_data()
-#plt.figure(figsize=(8,8))
-
-#for i in range(25):
-        #plt.subplot(5,5,i+1)
-        #plt.imshow(feature[i])
-        #plt.text(5,0,s=label[i])
-        #plt.xticks([])
-
-#plt.show()
