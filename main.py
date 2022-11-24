@@ -38,6 +38,7 @@ def comando():
 
 
 def buscarUltimoRecorte():
+    print("[!] Entrando no método de buscar o último recorte")
 
     metodo = cv2.TM_CCORR_NORMED # escolhe o metodo de correlacao (correlação cruzada normalizada)
 
@@ -59,6 +60,7 @@ def buscarUltimoRecorte():
     # queremos a similaridade numerica e as coordenadas do minimo local
     min,max,mnLocCoord,mxLocCoord = cv2.minMaxLoc(busca)
 
+    print("- Melhor match encontrado: ")
     print(cv2.minMaxLoc(busca))
 
     # extrai as cooredenadas do melhor match
@@ -79,8 +81,13 @@ def buscarUltimoRecorte():
     cv2.imshow('Resultado',imagem)
     cv2.waitKey(0)
 
+    print("[!] Fim do método de buscar o último recorte")
+    print("\n")
+
 
 def buscarRecorte():
+    print("[!] Entrando no método de buscar recorte em individual")
+
     # perguntar qual arquivo
     recorte = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem do recorte", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
 
@@ -91,12 +98,13 @@ def buscarRecorte():
     recorte = cv2.imread(recorte)
 
     # usa o opencv para buscar a ocorrência mais próxima do recorte na imagem aberta
-    # usando a correlação escolhida 
+    # usando a correlação escolhida
     busca = cv2.matchTemplate(recorte, imagem, metodo)
 
     # queremos a similaridade numerica e as coordenadas do minimo local
     min,max,mnLocCoord,mxLocCoord = cv2.minMaxLoc(busca)
 
+    print("- Melhor match encontrado: ")
     print(cv2.minMaxLoc(busca))
 
     # extrai as cooredenadas do melhor match
@@ -117,8 +125,12 @@ def buscarRecorte():
     cv2.imshow('Resultado',imagem)
     cv2.waitKey(0)
 
+    print("[!] Fim do método de buscar recorte em individual")
+    print("\n")
+
 
 def abrir_imagem():
+    print("[!] Entrando no método de abrir imagem individual")
     global file #!!
 
     file = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
@@ -131,7 +143,7 @@ def abrir_imagem():
         imagem_label.image=img
         imagem_label.grid(column = 1, row = 0)
 
-        # centraliza a imagem na hora de colocar ela
+        # centraliza a imagem na hora de colocar ela dependendo do tamanho dela
         if tam == 224:
             imagem_label.place(x=86, y=80) # imagem 224x224
         elif tam == 299:
@@ -139,7 +151,12 @@ def abrir_imagem():
         else:
             imagem_label.place(x=10, y = 10) # imagem esquisita fora do padrão
 
+        print("- Imagem inserida")
+        print("[!] Fim do método de abrir imagem individual")
+        print("\n")
 
+
+#variavel externa
 coord = [] # armazena as coordenadas de corte da imagem
 def recorte_imagem(event, x, y, flags, param):
 	global coord #!!
@@ -152,14 +169,18 @@ def recorte_imagem(event, x, y, flags, param):
 
 
 def recorte():
+    print("[!] Entrando no método de recorte")
+
     global imgCrop #!!
     global imgCorte #!!
+
     imgCrop = cv2.imread(file)
     clone = imgCrop.copy() # um clone da imagem original é criado para que possamos mudar a região de corte se necessário, 
                            # e a imagem original estará sem alterações pois as manipulações de corte ocorrerão no clone
     cv2.namedWindow("Recorte de Imagem") # Label para identifação da tela de recorte
     cv2.setMouseCallback("Recorte de Imagem", recorte_imagem) # Função de "escutar" o mouse
 
+    print("- Abrindo janela de recorte")
     while True:
         cv2.imshow("Recorte de Imagem", imgCrop) # mostra a imagem e espera a tecla correta para recortar
         key = cv2.waitKey(1)
@@ -170,6 +191,7 @@ def recorte():
             break
 
     corte = clone[coord[0][1]:coord[1][1], coord[0][0]:coord[1][0]] # corte é feito na imagem clone a partir das coordenadas armazenadas
+    print("- Corte feito")
 
     imgCorte = corte.copy()
 
@@ -178,46 +200,46 @@ def recorte():
 
     cv2.imwrite('crop.png', corte) # imagem cortada é salva no diretório local
 
+    print("[!] Fim do método de recorte")
+    print("\n")
+
 
 #################################### TREINO  ######################################
 
 
 def escolher_caminho():
+    print("[!] Entrando no método de seleção de caminho")
 
     global caminho_teste #!!
     global caminho_treino #!!
     global caminho_val #!!
 
-    print("[!] Entrando no método de seleção de caminho")
-
     file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de teste", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     caminho_teste = Path(file_caminho).parent.parent
     print("- Novo caminho de teste salvo: ")
     print(caminho_teste)
-    print(caminho_teste.stem)
-    print(type(caminho_teste.stem))
+    #print(caminho_teste.stem)
+    print("")
 
     file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     caminho_treino = Path(file_caminho).parent.parent
     print("- Novo caminho de treino salvo: ")
     print(caminho_treino)
-    print(caminho_treino.stem)
+    #print(caminho_treino.stem)
     print("")
 
     file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de validação", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     caminho_val = Path(file_caminho).parent.parent
     print("- Novo caminho de validação salvo: ")
     print(caminho_val)
-    print(caminho_val.stem)
+    #print(caminho_val.stem)
     print("")
 
     print("[!] Fim do método de seleção de caminho")
     print("\n")
 
 
-
 def treinar_classificador():
-
     print("[!] Entrando no método de treinar classificador")
 
     for i in range(5):
@@ -230,9 +252,12 @@ def treinar_classificador():
                 print(imagem)
         print("")
         
+    print("[!] Fim do método de treinar classificador")
+    print("\n")
 
 
 #################################### INTERFACE ####################################
+
 
 menu = tk.Menu(root)
 root.config(menu = menu)
