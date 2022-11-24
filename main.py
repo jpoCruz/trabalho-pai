@@ -1,13 +1,11 @@
 from re import X
-import tkinter as tk
+import tkinter as tk #para interface grafica
 from tkinter import filedialog
-import os
-from os import listdir
-from PIL import Image, ImageTk
-from pathlib import Path
-#import mouse
-#from pynput import mouse #pip install pynput
-import cv2 #pip install opencv-python
+from PIL import Image, ImageTk #para abrir imagens
+import os #para interagir com o resto da máquina
+from pathlib import Path #para administrar caminhos
+from pynput import mouse #para usar o mouse e cliques
+import cv2 #biblioteca de computer vision (recorte, match template)
 
 
 #
@@ -15,7 +13,7 @@ import cv2 #pip install opencv-python
 # Campus Coração Eucarístico
 #
 # Trabalho Final de Processamento e Análise de Imagens
-# Primeira Entrega
+# Entrega Final
 #
 # Iago Morgado - 618090
 # João Paulo Oliveira Cruz - 615932
@@ -186,36 +184,52 @@ def recorte():
 
 def escolher_caminho():
 
-    global caminho_pasta #!!
+    global caminho_teste #!!
+    global caminho_treino #!!
+    global caminho_val #!!
 
-    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha a imagem", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    print("[!] Entrando no método de seleção de caminho")
 
-    #file_caminho = file_caminho.replace("\\", "/")
-    result = Path(file_caminho).parent.parent.parent.parent
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de teste", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    caminho_teste = Path(file_caminho).parent.parent
+    print("- Novo caminho de teste salvo: ")
+    print(caminho_teste)
+    print(caminho_teste.stem)
+    print(type(caminho_teste.stem))
 
-    caminho_pasta = str(result)
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    caminho_treino = Path(file_caminho).parent.parent
+    print("- Novo caminho de treino salvo: ")
+    print(caminho_treino)
+    print(caminho_treino.stem)
+    print("")
 
-    #caminho_pasta = caminho_pasta.replace("\\", "/")
-    print(caminho_pasta)
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de validação", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    caminho_val = Path(file_caminho).parent.parent
+    print("- Novo caminho de validação salvo: ")
+    print(caminho_val)
+    print(caminho_val.stem)
+    print("")
+
+    print("[!] Fim do método de seleção de caminho")
+    print("\n")
+
 
 
 def treinar_classificador():
 
-    print("dentro do classificador")
-    print(caminho_pasta)
-
-    treino244 = caminho_pasta + "\\kneeKL244\\test\\"
-    treino299 = caminho_pasta + "\\kneeKL299\\test\\"
+    print("[!] Entrando no método de treinar classificador")
 
     for i in range(5):
-        pasta = treino244 + str(i)
+        pasta = caminho_teste / str(i)
+        print("- Caminho atual com numeração: ")
         print(pasta)
 
-        caminho = repr(pasta)[1:-1]
-
-        for imagem in os.listdir(caminho):
+        for imagem in os.listdir(pasta):
             if (imagem.endswith(".png")):
                 print(imagem)
+        print("")
+        
 
 
 #################################### INTERFACE ####################################
