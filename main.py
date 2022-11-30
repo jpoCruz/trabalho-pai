@@ -7,6 +7,7 @@ from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
 from util import load_data
+from VGG16 import trainVGG, testVGG
 import matplotlib.pyplot as plt
 
 
@@ -243,7 +244,11 @@ def escolher_caminho():
 
 def treinar_classificador():
     print("[!] Entrando no método de treinar classificador")
-    feature, label = load_data(caminho_treino,caminho_treino)
+    x_train, y_train = load_data(caminho_treino,caminho_treino)
+    x_test, y_test = load_data(caminho_teste,caminho_teste)
+    
+    trainVGG(x_train, y_train, x_test)
+    testVGG(x_test,y_test)
     
     """plt.figure(figsize=(8,8))
 

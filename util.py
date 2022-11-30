@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import pickle
+import random
 from pathlib import Path
 
 categories=['0','1','2','3','4']
@@ -29,6 +30,7 @@ def make_data(data_dir,data_dir_2):
                                 data.append([image,label])
                                 data.append([image_invertida,label])
                         except Exception as e:
+                                print(e)
                                 pass
                 for img_name_2 in os.listdir(path_2):
                         image_path_2=os.path.join(path_2,img_name_2)
@@ -46,6 +48,7 @@ def make_data(data_dir,data_dir_2):
                                 data.append([image_invertida2, label])
 
                         except Exception as e:
+                                print(e)
                                 pass
 
         if(data_dir.stem=='train'):
@@ -76,6 +79,7 @@ def load_data(data_dir,data_dir_2):
         
         if(pick!=None):
                 data_= pickle.load(pick)
+                random.shuffle(data_)
                 pick.close()
 
         feature=[]
