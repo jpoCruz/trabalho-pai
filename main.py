@@ -7,8 +7,10 @@ from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
 from util import load_data
-from VGG16 import trainVGG, testVGG
+from VGG16 import trainVGG #,testVGG
 import matplotlib.pyplot as plt
+import tensorflow as tf
+from sklearn.model_selection import train_test_split  
 
 
 #
@@ -244,11 +246,16 @@ def escolher_caminho():
 
 def treinar_classificador():
     print("[!] Entrando no método de treinar classificador")
-    x_train, y_train = load_data(caminho_treino,caminho_treino)
+    '''x_train, y_train = load_data(caminho_treino,caminho_treino)
     x_test, y_test = load_data(caminho_teste,caminho_teste)
-    
-    trainVGG(x_train, y_train, x_test)
-    testVGG(x_test,y_test)
+
+    print('train data shape:',x_train.shape)
+    print('train labels shape',y_train.shape)
+    print('test data shape:',x_test.shape)
+    print('test labels shape',y_test.shape)'''
+
+    trainVGG(caminho_treino)
+    #testVGG(x_test,y_test)
     
     """plt.figure(figsize=(8,8))
 

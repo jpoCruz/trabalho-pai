@@ -32,7 +32,7 @@ def make_data(data_dir,data_dir_2):
                         except Exception as e:
                                 print(e)
                                 pass
-                for img_name_2 in os.listdir(path_2):
+                """for img_name_2 in os.listdir(path_2):
                         image_path_2=os.path.join(path_2,img_name_2)
                         image_2=cv2.imread(image_path_2, cv2.IMREAD_GRAYSCALE)# leitura da imagem em tons de cinza
                         try:
@@ -49,7 +49,7 @@ def make_data(data_dir,data_dir_2):
 
                         except Exception as e:
                                 print(e)
-                                pass
+                                pass"""
 
         if(data_dir.stem=='train'):
                 print(len(data))

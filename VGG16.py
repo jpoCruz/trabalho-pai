@@ -1,6 +1,5 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from tensorflow.keras import datasets, layers, models, losses
 
 def getModel():
     input_layer = tf.keras.layers.Input([224,224,1])
@@ -47,11 +46,9 @@ def getModel():
 
     return model
 
-def trainVGG(x_train, y_train, x_test):
-    #x_train, x_test = tf.cast(x_train,tf.float32), tf.cast(x_test, tf.float32)
+def trainVGG(caminho_treino):
 
-    train_dataset=tf.data.Dataset.from_tensor_slices((x_train,y_train))
-    train_dataset=train_dataset.batch(batch_size=10)
+    train_dataset=tf.keras.utils.image_dataset_from_directory(caminho_treino,color_mode='grayscale',batch_size=32,image_size=(224,224),shuffle=True)
 
     model=getModel()
     loss_object= tf.keras.losses.SparseCategoricalCrossentropy()
@@ -70,8 +67,8 @@ def trainVGG(x_train, y_train, x_test):
         train_loss(loss)
         train_accuracy(labels, predictions)
         
-    print(":::CONTROLE:::") 
-    for epoch in range(1):
+    print(":::INICIO DO TREINO:::") 
+    for epoch in range(5):
         train_loss.reset_states()
         train_accuracy.reset_states()
         step = 0
@@ -80,10 +77,10 @@ def trainVGG(x_train, y_train, x_test):
             train_step(images, labels)
             if step%10 ==0:
                 print('=> epoch: %i, loss: %.4f, train_accuracy: %.4f'%(epoch+1,train_loss.result(), train_accuracy.result()))
-    print(":::CONTROLE:::")
+    print(":::FIM DO TREINO:::")
     model.save('VGG16.h5')
 
-def testVGG(x_test,y_test):
+"""def testVGG(x_test,y_test):
     categories=['0','1','2','3','4']
 
     model= tf.keras.models.load_model('VGG16.h5')
@@ -99,4 +96,4 @@ def testVGG(x_test,y_test):
 
         plt.xticks([])
 
-    plt.show()
+    plt.show()"""
