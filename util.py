@@ -28,7 +28,7 @@ def make_data(data_dir,data_dir_2):
                                 image_invertida = np.array(image_invertida)
 
                                 data.append([image,label])
-                                #data.append([image_invertida,label])
+                                data.append([image_invertida,label])
                         except Exception as e:
                                 print(e)
                                 pass

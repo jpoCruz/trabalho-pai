@@ -7,9 +7,10 @@ from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
 from util import load_data
-from VGG16 import trainVGG #,testVGG
+from VGG16 import trainVGG
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
 
 
 #
@@ -264,6 +265,23 @@ def treinar_classificador():
     print("[!] Fim do método de treinar classificador")
     print("\n")
 
+def classificar_imagem():
+    print("[!] Entrando no método de classificar imagem")
+    if file:
+        img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+        img = cv2.equalizeHist(img)
+        img = cv2.resize(img,(32,32))
+        img = np.array(img)
+        img = np.expand_dims(img,axis=0)
+        img = np.expand_dims(img,axis=3)
+        img = np.repeat(img,3,axis=3)
+        print(img.shape)
+        model = tf.keras.models.load_model('Vgg16.h5')
+        prediction=model.predict(img)
+        print(np.argmax(prediction))#Mudar para output gráfico
+            
+    print("[!] Fim do método de classificar imagem")
+    print("\n")
 
 #################################### INTERFACE ####################################
 
@@ -290,6 +308,7 @@ menu.add_cascade(label="Classificadores", menu=classif_menu)
 classif_menu.add_command(label="Escolher Caminho a partir de imagem", command=escolher_caminho)
 classif_menu.add_command(label="Escolher Classificador", command=comando)
 classif_menu.add_command(label="Treinar Classificador", command=treinar_classificador)
+classif_menu.add_command(label="Classificar imagem", command=classificar_imagem)
 
 #imagem inicial
 imagem = Image.open('vazio.png')
