@@ -2,7 +2,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 def getModel():
-    input_layer = tf.keras.layers.Input([224,224,1])
+    input_layer = tf.keras.layers.Input([32,32,3])
     #block1 
     conv1_1 = tf.keras.layers.Conv2D(filters=64, kernel_size=[3,3],strides=[1,1],padding='same',activation='relu', name='conv1_1')(input_layer)
     conv1_2 = tf.keras.layers.Conv2D(filters= 64, kernel_size=[3,3], strides= [1,1],padding='same',activation='relu', name='conv1_2')(conv1_1)
@@ -35,65 +35,49 @@ def getModel():
     pool5_1 = tf.nn.max_pool(conv5_4, ksize=[1,2,2,1], strides=[1,2,2,1],padding='SAME', name='pool5_1')
 
     flatten  = tf.keras.layers.Flatten()(pool5_1)
-    fc6 = tf.keras.layers.Dense(units=256, name='fc6', activation='relu')(flatten)
-    fc7 = tf.keras.layers.Dense(units=128, name='fc7', activation='relu')(fc6)
+    fc6 = tf.keras.layers.Dense(units=4096, name='fc6', activation='relu')(flatten)
+    fc7 = tf.keras.layers.Dense(units=4096, name='fc7', activation='relu')(fc6)
     fc8 = tf.keras.layers.Dense(units=5, name='fc8',activation=None)(fc7)
 
     prob = tf.nn.softmax(fc8)
 
     model = tf.keras.Model(input_layer, prob)
-    model.summary()
 
     return model
 
-def trainVGG(caminho_treino):
+def trainVGG(x_train,x_test,y_train,y_test):
+    model=tf.keras.applications.VGG16(weights = 'imagenet', include_top = False, input_shape = (32,32,3))
+    for layer in model.layers:
+      layer.trainable = False
 
-    train_dataset=tf.keras.utils.image_dataset_from_directory(caminho_treino,color_mode='grayscale',batch_size=32,image_size=(224,224),shuffle=True)
+    x = tf.keras.layers.Flatten()(model.output)
+    x = tf.keras.layers.Dense(4096, activation='relu')(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    x = tf.keras.layers.Dense(4096, activation='relu')(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    predictions = tf.keras.layers.Dense(5, activation = 'softmax')(x)
 
-    model=getModel()
-    loss_object= tf.keras.losses.SparseCategoricalCrossentropy()
-    optmizer=tf.keras.optimizers.Adam()
+    model = tf.keras.Model(inputs = model.input, outputs = predictions)
+    opt=tf.keras.optimizers.Adam()
+    loss=tf.keras.losses.SparseCategoricalCrossentropy()
+    metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy')]
 
-    train_loss=tf.keras.metrics.Mean(name='train_loss')
-    train_accuracy=tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
-    @tf.function
-    def train_step(images,labels):
-        with tf.GradientTape() as tape:
-            predictions = model(images,training= True)
-            loss = loss_object(y_true=labels, y_pred=predictions)
-        gradients=tape.gradient(loss, model.trainable_variables)
-        optmizer.apply_gradients(grads_and_vars=zip(gradients,model.trainable_variables))
+    model.compile(optimizer=opt,loss=loss,metrics=metrics)
 
-        train_loss(loss)
-        train_accuracy(labels, predictions)
-        
-    print(":::INICIO DO TREINO:::") 
-    for epoch in range(5):
-        train_loss.reset_states()
-        train_accuracy.reset_states()
-        step = 0
-        for images, labels in train_dataset:
-            step+=1 
-            train_step(images, labels)
-            if step%10 ==0:
-                print('=> epoch: %i, loss: %.4f, train_accuracy: %.4f'%(epoch+1,train_loss.result(), train_accuracy.result()))
-    print(":::FIM DO TREINO:::")
-    model.save('VGG16.h5')
+    hist = model.fit(x_train,y_train,batch_size=1,epochs=10,validation_data=(x_test,y_test))
+    model.save('Vgg16.h5')
+    model.summary()
 
-"""def testVGG(x_test,y_test):
-    categories=['0','1','2','3','4']
+    plt.subplot(2, 1, 1)
+    plt.title('Acurácia')
+    plt.plot(hist.history['accuracy'], '-o', label='treino')
+    plt.plot(hist.history['val_accuracy'], '-o', label='teste')
+    plt.legend(loc='lower right')
 
-    model= tf.keras.models.load_model('VGG16.h5')
-    prediction = model(x_test[0:9])
-
-    plt.figure(figsize=(8,8))
-
-    for i in range(9):
-        plt.subplot(3,3,i+1)
-        plt.imshow(x_test[i])
-        plt.xlabel('Pedicted:%s\n Actual: %s'%(categories[np.argmax(prediction[i])],
-            categories[y_test[i]]))
-
-        plt.xticks([])
-
-    plt.show()"""
+    plt.subplot(2, 1, 2)
+    plt.title('Perda')
+    plt.plot(hist.history['loss'], '-o', label='treino')
+    plt.plot(hist.history['val_loss'], '-o', label='teste')
+    plt.legend(loc='lower right')
+    
+    plt.gcf().set_size_inches(15, 12)

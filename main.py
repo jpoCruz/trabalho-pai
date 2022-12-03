@@ -9,8 +9,7 @@ import cv2 #biblioteca de computer vision (recorte, match template)
 from util import load_data
 from VGG16 import trainVGG #,testVGG
 import matplotlib.pyplot as plt
-import tensorflow as tf
-from sklearn.model_selection import train_test_split  
+import numpy as np
 
 
 #
@@ -246,27 +245,21 @@ def escolher_caminho():
 
 def treinar_classificador():
     print("[!] Entrando no método de treinar classificador")
-    '''x_train, y_train = load_data(caminho_treino,caminho_treino)
+    
+    x_train, y_train = load_data(caminho_treino,caminho_treino)
     x_test, y_test = load_data(caminho_teste,caminho_teste)
+
+    x_train=np.expand_dims(x_train,axis=3)
+    x_test=np.expand_dims(x_test,axis=3)
+    x_train=np.repeat(x_train,3,axis=3)
+    x_test=np.repeat(x_test,3,axis=3)
 
     print('train data shape:',x_train.shape)
     print('train labels shape',y_train.shape)
     print('test data shape:',x_test.shape)
-    print('test labels shape',y_test.shape)'''
+    print('test labels shape',y_test.shape)
 
-    trainVGG(caminho_treino)
-    #testVGG(x_test,y_test)
-    
-    """plt.figure(figsize=(8,8))
-
-    for i in range(25):
-        plt.subplot(5,5,i+1)
-        plt.imshow(feature[i])
-        plt.text(5,0,s=label[i])
-        plt.xticks([])
-
-    plt.show()"""
-
+    trainVGG(x_train,x_test,y_train,y_test)
         
     print("[!] Fim do método de treinar classificador")
     print("\n")
