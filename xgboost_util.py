@@ -253,7 +253,7 @@ def treinoXGBoost():
     acuracia = model.score(X_test, y_test)
 
     segundos = (time.time() - start_time)
-    mensagem = ("\nTempo de execução: " + segundos + "s\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\n")
+    mensagem = ("\nTempo de execução: " + str(segundos) + "s\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\n")
 
     popupInfo(mensagem)
 
@@ -277,7 +277,7 @@ def classificarXGBoost(file):
     prediction = model.predict(img_recortada.reshape(1, -1))
 
     segundos = (time.time() - start_time)
-    mensagem = "\nTempo de execução: " + segundos + "s\n" + "\nClasse [" + str(prediction) + "]\n"
+    mensagem = "\nTempo de execução: " + str(segundos) + "s\n" + "\nClasse [" + str(prediction) + "]\n"
 
     popupSmall(mensagem)
 
@@ -512,7 +512,7 @@ def treinoXGBoost_Binario():
     specifity = cmatrix[1, 1]/(cmatrix[1, 0]+cmatrix[1, 1])
     segundos = (time.time() - start_time)
 
-    mensagem = ("\nTempo de execução: " + segundos + "s\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\nEspecificidade: " + str(specifity) + "\n")
+    mensagem = ("\nTempo de execução: " + str(segundos) + "s\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\nEspecificidade: " + str(specifity) + "\n")
 
     popupInfo(mensagem)
 
@@ -538,7 +538,7 @@ def classificarXGBoost_Binario(file):
     prediction = model.predict(img_recortada.reshape(1, -1))
     segundos = (time.time() - start_time)
 
-    mensagem = "\nTempo de execução: " + segundos + "s\n" + "\nClasse [" + str(prediction) + "]\n"
+    mensagem = "\nTempo de execução: " + str(segundos) + "s\n" + "\nClasse [" + str(prediction) + "]\n"
 
     popupSmall(mensagem)
 
