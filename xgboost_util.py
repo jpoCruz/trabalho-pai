@@ -13,6 +13,7 @@ from tkinter import filedialog
 from pathlib import Path
 from xgboost import XGBClassifier
 import tkinter as tk
+import time
 
 #
 # Ciência da Computação PUC Minas
@@ -56,6 +57,8 @@ def popupSmall(message): #abre um popup com a string "message" como corpo
     pop.mainloop()
 
 def treinoXGBoost():
+
+    start_time = time.time()
 
     ####### Treino #######
     categories = ['0', '1', '2', '3', '4'] #categorias de osteoartrite
@@ -249,13 +252,16 @@ def treinoXGBoost():
     cmatrix = confusion_matrix(y_test, prediction)
     acuracia = model.score(X_test, y_test)
 
-    mensagem = ("\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\n")
+    segundos = (time.time() - start_time)
+    mensagem = ("\nTempo de execução: " + segundos + "s\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\n")
 
     popupInfo(mensagem)
 
 
 
 def classificarXGBoost(file):
+
+    start_time = time.time()
 
     img = cv2.imread(file, 0) #imagem lida em tons de cinza
     img_recortada = img[73:166, 3:222] #imagem é recortada no meio
@@ -270,7 +276,8 @@ def classificarXGBoost(file):
     #predição de classe da imagem selecionada 
     prediction = model.predict(img_recortada.reshape(1, -1))
 
-    mensagem = "\nClasse [" + str(prediction) + "]\n"
+    segundos = (time.time() - start_time)
+    mensagem = "\nTempo de execução: " + segundos + "s\n" + "\nClasse [" + str(prediction) + "]\n"
 
     popupSmall(mensagem)
 
@@ -280,6 +287,8 @@ def classificarXGBoost(file):
 
 
 def treinoXGBoost_Binario():
+
+    start_time = time.time()
 
     #####Treino#####
 
@@ -501,8 +510,9 @@ def treinoXGBoost_Binario():
     cmatrix = confusion_matrix(y_test, prediction)
     acuracia = model.score(X_test, y_test)
     specifity = cmatrix[1, 1]/(cmatrix[1, 0]+cmatrix[1, 1])
+    segundos = (time.time() - start_time)
 
-    mensagem = ("\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\nEspecificidade: " + str(specifity) + "\n")
+    mensagem = ("\nTempo de execução: " + segundos + "s\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\nEspecificidade: " + str(specifity) + "\n")
 
     popupInfo(mensagem)
 
@@ -511,6 +521,8 @@ def treinoXGBoost_Binario():
 
 
 def classificarXGBoost_Binario(file):
+
+    start_time = time.time()
         
     img = cv2.imread(file, 0) #imagem lida em tons de cinza
     img_recortada = img[73:166, 3:222] #imagem é recortada no meio
@@ -524,8 +536,9 @@ def classificarXGBoost_Binario(file):
 
     #predição de classe da imagem selecionada 
     prediction = model.predict(img_recortada.reshape(1, -1))
+    segundos = (time.time() - start_time)
 
-    mensagem = "\nClasse [" + str(prediction) + "]\n"
+    mensagem = "\nTempo de execução: " + segundos + "s\n" + "\nClasse [" + str(prediction) + "]\n"
 
     popupSmall(mensagem)
 
