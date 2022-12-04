@@ -8,9 +8,13 @@ from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
 from util import load_data
 from VGG16 import trainVGG
+from treino_svm import treinoSVM
+from teste_svm import testeSVM
+from classificar_svm import classificarSVM
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
+import time #marcar tempo de execução
 
 
 #
@@ -36,11 +40,17 @@ info = tk.Frame(root, width=240, height=480, bg="#b3b3b3")
 info.grid(row = 0, column=2)
 info.place(x=400)
 
+#variáveis para verificar o classificador escolhido
+var_svm = False
+
+var_xgboost = False
+
+var_vgg16 = False
+
 #################################### FUNÇÕES ####################################
 
 def comando():
     pass
-
 
 def buscarUltimoRecorte():
     print("[!] Entrando no método de buscar o último recorte")
@@ -246,43 +256,105 @@ def escolher_caminho():
 
 def treinar_classificador():
     print("[!] Entrando no método de treinar classificador")
+    start_time = time.time()
+
+    if(var_vgg16):
     
-    x_train, y_train = load_data(caminho_treino,caminho_treino)
-    x_test, y_test = load_data(caminho_teste,caminho_teste)
+        x_train, y_train = load_data(caminho_treino,caminho_treino)
+        x_test, y_test = load_data(caminho_teste,caminho_teste)
 
-    x_train=np.expand_dims(x_train,axis=3)
-    x_test=np.expand_dims(x_test,axis=3)
-    x_train=np.repeat(x_train,3,axis=3)
-    x_test=np.repeat(x_test,3,axis=3)
+        x_train=np.expand_dims(x_train,axis=3)
+        x_test=np.expand_dims(x_test,axis=3)
+        x_train=np.repeat(x_train,3,axis=3)
+        x_test=np.repeat(x_test,3,axis=3)
 
-    print('train data shape:',x_train.shape)
-    print('train labels shape',y_train.shape)
-    print('test data shape:',x_test.shape)
-    print('test labels shape',y_test.shape)
-
-    trainVGG(x_train,x_test,y_train,y_test)
+        trainVGG(x_train,x_test,y_train,y_test)
+    
+    elif(var_svm):
+        treinoSVM()
+        testeSVM()
+        pass
         
+
+    elif(var_xgboost):
+        pass
+
+    else:
+        print("Nenhum classificador foi selecionado")
+        
+    print("--- %s seconds ---" % (time.time() - start_time))
     print("[!] Fim do método de treinar classificador")
     print("\n")
 
+
 def classificar_imagem():
     print("[!] Entrando no método de classificar imagem")
-    if file:
-        img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
-        img = cv2.equalizeHist(img)
-        img = cv2.resize(img,(32,32))
-        img = np.array(img)
-        img = np.expand_dims(img,axis=0)
-        img = np.expand_dims(img,axis=3)
-        img = np.repeat(img,3,axis=3)
-        print(img.shape)
-        model = tf.keras.models.load_model('Vgg16.h5')
-        prediction=model.predict(img)
-        print(np.argmax(prediction))#Mudar para output gráfico
+
+    start_time = time.time()
+
+    if(var_vgg16):
+        if file:
+            img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+            img = cv2.equalizeHist(img)
+            img = cv2.resize(img,(32,32))
+            img = np.array(img)
+            img = np.expand_dims(img,axis=0)
+            img = np.expand_dims(img,axis=3)
+            img = np.repeat(img,3,axis=3)
+            print(img.shape)
+            model = tf.keras.models.load_model('Vgg16.h5')
+            prediction=model.predict(img)
+            print(np.argmax(prediction))#Mudar para output gráfico
+        
+    elif(var_svm):
+        classificarSVM()
+
+    elif(var_xgboost):
+        pass
             
+
+    print("--- %s seconds ---" % (time.time() - start_time))
     print("[!] Fim do método de classificar imagem")
     print("\n")
 
+def classificar_binaria():
+    pass
+
+def svm():
+    global var_svm
+    var_svm = True
+
+    global var_xgboost
+    var_xgboost = False
+
+    global var_vgg16
+    var_vgg16 = False
+
+    print("SVM Escolhido!")
+    
+def xgboost():
+    global var_svm
+    var_svm = False
+
+    global var_xgboost
+    var_xgboost = True
+
+    global var_vgg16
+    var_vgg16 = False
+
+    print("XGBoost Escolhido!")
+
+def vgg():
+    global var_svm
+    var_svm = False
+
+    global var_xgboost
+    var_xgboost = False
+
+    global var_vgg16
+    var_vgg16 = True
+
+    print("VGG16 Escolhido!")
 #################################### INTERFACE ####################################
 
 
@@ -302,13 +374,20 @@ process_menu.add_command(label="Recortar e salvar recorte na raiz", command=reco
 process_menu.add_command(label="Buscar do último recorte", command=buscarUltimoRecorte)
 process_menu.add_command(label="Buscar de um arquivo", command=buscarRecorte)
 
+#treinamento/classificação
+treino_menu = tk.Menu(menu)
+menu.add_cascade(label="Treinamento/Classificação", menu=treino_menu)
+treino_menu.add_command(label="Escolher Caminho a partir de imagem", command=escolher_caminho)
+treino_menu.add_command(label="Treinar Classificador", command=treinar_classificador)
+treino_menu.add_command(label="Classificar imagem", command=classificar_imagem)
+treino_menu.add_command(label="Classificação Binária", command=classificar_binaria)
+
 #classificadores
 classif_menu = tk.Menu(menu)
 menu.add_cascade(label="Classificadores", menu=classif_menu)
-classif_menu.add_command(label="Escolher Caminho a partir de imagem", command=escolher_caminho)
-classif_menu.add_command(label="Escolher Classificador", command=comando)
-classif_menu.add_command(label="Treinar Classificador", command=treinar_classificador)
-classif_menu.add_command(label="Classificar imagem", command=classificar_imagem)
+classif_menu.add_command(label="SVM", command=svm)
+classif_menu.add_command(label="XGBoost", command=xgboost)
+classif_menu.add_command(label="VGG16", command=vgg)
 
 #imagem inicial
 imagem = Image.open('vazio.png')
