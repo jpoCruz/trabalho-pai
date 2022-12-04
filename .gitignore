@@ -5,3 +5,7 @@ knee_test.pickle
 knee_train.pickle
 knee_val.pickle
 Vgg16.h5
+model_binario.h5
+model_xgboost_binario.h5
+model.h5
+model_xgboost_hiperparametros.h5
