@@ -212,7 +212,6 @@ def treinoXGBoost():
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
 
-
 def classificarXGBoost(file):
 
     img = cv2.imread(file, 0) #imagem lida em tons de cinza
@@ -229,10 +228,6 @@ def classificarXGBoost(file):
     prediction = model.predict(img_recortada.reshape(1, -1))
 
     print("Prediction is: ", prediction)
-
-
-
-
 
 def treinoXGBoost_Binario():
 
@@ -458,9 +453,6 @@ def treinoXGBoost_Binario():
     print("Acuracia: ", model.score(X_test, y_test))
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
-
-
-
 
 def classificarXGBoost_Binario(file):
         

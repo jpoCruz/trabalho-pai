@@ -6,8 +6,7 @@ import os #para interagir com o resto da máquina
 from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
-from util import load_data
-from VGG16 import trainVGG
+from VGG16 import trainVGG,load_data
 from svm import treinoSVM, treinoSVM_Binario, classificarSVM, classificarSVM_Binario
 from xgboost import treinoXGBoost, treinoXGBoost_Binario, classificarXGBoost, classificarXGBoost_Binario
 import matplotlib.pyplot as plt
@@ -289,15 +288,15 @@ def treinar_classificador():
     start_time = time.time()
 
     if(var_vgg16):
-    
+        #Carregando o dataset de treino e teste a partir das pastas de imagens
         x_train, y_train = load_data(caminho_treino224, caminho_treino299)
         x_test, y_test = load_data(caminho_teste224, caminho_teste299)
-
+        #Adequando as dimensões dos dados de treino e teste à entrada do modelo VGG16
         x_train=np.expand_dims(x_train,axis=3)
         x_test=np.expand_dims(x_test,axis=3)
         x_train=np.repeat(x_train,3,axis=3)
         x_test=np.repeat(x_test,3,axis=3)
-
+        #Chamada ao método de treino do VGG16
         trainVGG(x_train,x_test,y_train,y_test)
     
     elif(var_svm):

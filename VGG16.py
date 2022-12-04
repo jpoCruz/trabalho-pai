@@ -33,6 +33,7 @@ def make_data(data_dir,data_dir_2):
                         except Exception as e:
                                 print(e)
                                 pass
+                              
                 for img_name_2 in os.listdir(path_2):
                         image_path_2=os.path.join(path_2,img_name_2)
                         image_2=cv2.imread(image_path_2, cv2.IMREAD_GRAYSCALE)# leitura da imagem em tons de cinza
@@ -163,7 +164,7 @@ def trainVGG(x_train,x_test,y_train,y_test):
     model.compile(optimizer=opt,loss=loss,metrics=metrics)#Compilação do modelo com otimizador,função de perda e métricas
     #Treinamento do modelo, treino a teste são feitos simultaneamente
     #hist recebe o historico dos valores de perda e metricas do modelo
-    hist = model.fit(x_train,y_train,batch_size=1,epochs=10,validation_data=(x_test,y_test))
+    hist = model.fit(x_train,y_train,batch_size=5,epochs=40,validation_data=(x_test,y_test))
     
     model.save('Vgg16.h5')#Salva o modelo treinado em um arquivo
     model.summary()#mostra a topologia da rede

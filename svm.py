@@ -211,7 +211,6 @@ def treinoSVM():
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
 
-
 def classificarSVM(file):
 
     img = cv2.imread(file, 0) #imagem lida em tons de cinza
@@ -228,10 +227,6 @@ def classificarSVM(file):
     prediction = model.predict(img_recortada.reshape(1, -1))
 
     print("Prediction is: ", prediction)
-
-
-
-
 
 def treinoSVM_Binario():
 
@@ -457,9 +452,6 @@ def treinoSVM_Binario():
     print("Acuracia: ", model.score(X_test, y_test))
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
-
-
-
 
 def classificarSVM_Binario(file):
         
