@@ -11,8 +11,20 @@ from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
-import xgboost_util as xgb
+from xgboost import XGBClassifier
 import tkinter as tk
+
+#
+# Ciência da Computação PUC Minas
+# Campus Coração Eucarístico
+#
+# Trabalho Final de Processamento e Análise de Imagens
+# Entrega Final
+#
+# Iago Morgado - 618090
+# João Paulo Oliveira Cruz - 615932
+# Pedro Rodrigues - 594451
+#
 
 def popupInfo(message): #abre um popup com a string "message" como corpo
     print("[!] Abrindo popup de métricas")
@@ -133,7 +145,7 @@ def treinoXGBoost():
         labels.append(label)
 
     #treinamento do modelo
-    model = xgb.XGBClassifier(n_estimators=2, max_depth=5, learning_rate=1, objective='reg:logistic')
+    model = XGBClassifier(n_estimators=2, max_depth=5, learning_rate=1, objective='reg:logistic')
     model.fit(features, labels)
     
     #salvando modelo externamente
@@ -362,7 +374,7 @@ def treinoXGBoost_Binario():
             labels.append(0)
 
     #treinamento do modelo
-    model = xgb.XGBClassifier(n_estimators=2, max_depth=5, learning_rate=1, objective='reg:logistic')
+    model = XGBClassifier(n_estimators=2, max_depth=5, learning_rate=1, objective='reg:logistic')
     model.fit(features, labels)
     
     #salvando modelo externamente

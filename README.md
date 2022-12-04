@@ -24,6 +24,9 @@ Processamento -> Buscar de um arquivo / buscar do último recorte
 
   verde: identico  
   amarelo: parecido  
-  vermelho: diferente  
+  vermelho: diferente 
+
+**Para classificar**
+Escolha uma imagem
   
 Trabalho também hosteado no github em https://github.com/jpoCruz/trabalho-pai

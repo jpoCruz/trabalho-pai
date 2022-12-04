@@ -313,6 +313,24 @@ def treinar_classificador():
     print("\n")
 
 
+def treinar_classificador_binario():
+    print("[!] Entrando no método de treinar classificador binário")
+    start_time = time.time()
+
+    if(var_svm):
+        treinoSVM_Binario()
+
+    elif(var_xgboost):
+        treinoXGBoost_Binario()
+
+    else:
+        print("Nenhum classificador foi selecionado")
+        
+    print("--- %s seconds ---" % (time.time() - start_time))
+    print("[!] Fim do método de treinar classificador binário")
+    print("\n")
+
+
 def classificar_imagem():
     print("[!] Entrando no método de classificar imagem")
 
@@ -465,8 +483,9 @@ treino_menu = tk.Menu(menu)
 menu.add_cascade(label="Treinamento/Classificação", menu=treino_menu)
 treino_menu.add_command(label="Escolher Caminho a partir de imagem", command=escolher_caminho)
 treino_menu.add_command(label="Treinar Classificador", command=treinar_classificador)
+treino_menu.add_command(label="Treinar Classificador Binário", command=treinar_classificador_binario)
 treino_menu.add_command(label="Classificar imagem", command=classificar_imagem)
-treino_menu.add_command(label="Classificação Binária", command=classificar_binaria)
+treino_menu.add_command(label="Classificação binária", command=classificar_binaria)
 
 #classificadores
 classif_menu = tk.Menu(menu)
