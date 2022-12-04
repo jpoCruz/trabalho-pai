@@ -14,7 +14,6 @@ import numpy as np
 import tensorflow as tf
 import time #marcar tempo de execução
 
-
 #
 # Ciência da Computação PUC Minas
 # Campus Coração Eucarístico

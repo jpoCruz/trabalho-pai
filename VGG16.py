@@ -7,6 +7,18 @@ import pickle
 import random
 from pathlib import Path
 
+#
+# Ciência da Computação PUC Minas
+# Campus Coração Eucarístico
+#
+# Trabalho Final de Processamento e Análise de Imagens
+# Entrega Final
+#
+# Iago Morgado - 618090
+# João Paulo Oliveira Cruz - 615932
+# Pedro Rodrigues - 594451
+#
+
 categories=['0','1','2','3','4']
 # Função que cria os arquivos .pickle necessários para criar o dataset
 def make_data(data_dir,data_dir_2):

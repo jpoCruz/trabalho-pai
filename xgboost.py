@@ -14,6 +14,18 @@ from pathlib import Path
 import seaborn as sns
 import xgboost as xgb
 
+#
+# Ciência da Computação PUC Minas
+# Campus Coração Eucarístico
+#
+# Trabalho Final de Processamento e Análise de Imagens
+# Entrega Final
+#
+# Iago Morgado - 618090
+# João Paulo Oliveira Cruz - 615932
+# Pedro Rodrigues - 594451
+#
+
 def treinoXGBoost():
 
     ####### Treino #######
