@@ -11,7 +11,6 @@ from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
-import seaborn as sns
 import xgboost as xgb
 
 def treinoXGBoost():
@@ -108,7 +107,7 @@ def treinoXGBoost():
     model.fit(features, labels)
     
     #salvando modelo externamente
-    pick_model = open('model_xgboost.h5', 'wb')
+    pick_model = open('model_xgboost_hiperparametros.h5', 'wb')
     pickle.dump(model, pick_model)
     pick_model.close()
 
@@ -197,7 +196,7 @@ def treinoXGBoost():
     X_train, X_test, y_train, y_test = train_test_split(features_teste, labels_teste, test_size = 0.98)
 
     #modelo sendo carregado
-    pick_model_treinado = open('model_xgboost.h5', 'rb')
+    pick_model_treinado = open('model_xgboost_hiperparametros.h5', 'rb')
     model = pickle.load(pick_model_treinado)
     pick_model_treinado.close()
 
@@ -219,7 +218,7 @@ def classificarXGBoost(file):
     img_recortada = filters.sobel(img_recortada) #aplicado filtro de sobel
 
     #modelo sendo carregado
-    pick_model_treinado = open('model_xgboost.h5', 'rb')
+    pick_model_treinado = open('model_xgboost_hiperparametros.h5', 'rb')
     model = pickle.load(pick_model_treinado)
     pick_model_treinado.close()
 

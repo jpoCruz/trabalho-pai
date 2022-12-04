@@ -415,11 +415,16 @@ def vgg():
 
 def popup():
     print("Abrindo popup")
-    global pop
-    pop = Toplevel(root)
-    pop.title("Meu popup")
+    pop = tk.Toplevel(root)
+    pop.title("Meu popup!!")
     pop.geometry("250x150")
     pop.config(bg="#b3b3b3")
+    alert = tk.Label(pop, text="Ta funcionando?")
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy)
+    alert.pack()
+    button1.pack()
+
+    pop.mainloop()
 
 #################################### INTERFACE ####################################
 

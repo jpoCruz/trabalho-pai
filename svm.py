@@ -11,7 +11,6 @@ from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
-import seaborn as sns
 
 def treinoSVM():
 
