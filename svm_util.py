@@ -13,9 +13,21 @@ from tkinter import filedialog
 from pathlib import Path
 import tkinter as tk
 
+#
+# Ciência da Computação PUC Minas
+# Campus Coração Eucarístico
+#
+# Trabalho Final de Processamento e Análise de Imagens
+# Entrega Final
+#
+# Iago Morgado - 618090
+# João Paulo Oliveira Cruz - 615932
+# Pedro Rodrigues - 594451
+#
+
 
 def popupInfo(message): #abre um popup com a string "message" como corpo
-    print("Abrindo popup")
+    print("[!] Abrindo popup de métricas")
 
     pop = tk.Toplevel()
     pop.title("Métricas")
@@ -29,7 +41,7 @@ def popupInfo(message): #abre um popup com a string "message" como corpo
     pop.mainloop()
 
 def popupSmall(message): #abre um popup com a string "message" como corpo
-    print("Abrindo popup")
+    print("[!] Abrindo popup de predição!")
 
     pop = tk.Toplevel()
     pop.title("Predição")
@@ -51,7 +63,6 @@ def treinoSVM():
 
     #escolhendo pastas de treino
 
-    '''
     file_caminho_dir1 = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     file_caminho_dir1 = Path(file_caminho_dir1).parent.parent #escolhendo a imagem, recebe-se a pasta de categorias de imagens (224, 224)
 
@@ -141,7 +152,7 @@ def treinoSVM():
     pick_model = open('model.h5', 'wb')
     pickle.dump(model, pick_model)
     pick_model.close()
-    '''
+    
 
     ########## TESTE ##########
 
@@ -494,7 +505,6 @@ def treinoSVM_Binario():
 
     popupInfo(mensagem)
 
-    
 
 
 

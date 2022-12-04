@@ -11,11 +11,11 @@ from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
-import xgboost as xgb
+import xgboost_util as xgb
 import tkinter as tk
 
 def popupInfo(message): #abre um popup com a string "message" como corpo
-    print("Abrindo popup")
+    print("[!] Abrindo popup de métricas")
 
     pop = tk.Toplevel()
     pop.title("Métricas")
@@ -30,7 +30,7 @@ def popupInfo(message): #abre um popup com a string "message" como corpo
 
 
 def popupSmall(message): #abre um popup com a string "message" como corpo
-    print("Abrindo popup")
+    print("[!] Abrindo popup de predição!")
 
     pop = tk.Toplevel()
     pop.title("Predição")

@@ -6,9 +6,9 @@ import os #para interagir com o resto da máquina
 from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
-from VGG16 import trainVGG,load_data
-from svm import treinoSVM, treinoSVM_Binario, classificarSVM, classificarSVM_Binario
-from xgboost import treinoXGBoost, treinoXGBoost_Binario, classificarXGBoost, classificarXGBoost_Binario
+from VGG16_util import trainVGG,load_data
+from svm_util import treinoSVM, treinoSVM_Binario, classificarSVM, classificarSVM_Binario
+from xgboost_util import treinoXGBoost, treinoXGBoost_Binario, classificarXGBoost, classificarXGBoost_Binario
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -330,7 +330,8 @@ def classificar_imagem():
             print(img.shape)
             model = tf.keras.models.load_model('Vgg16.h5')
             prediction=model.predict(img)
-            print(np.argmax(prediction))#Mudar para output gráfico
+            mensagem = "\nClasse [[" + str(np.argmax(prediction)) + "]]\n"
+            popupSmall(mensagem)
         
     elif(var_svm):
         if file:
@@ -426,15 +427,16 @@ def vgg():
     print("VGG16 Escolhido!")
 
 
-def popup():
+def popupSmall(message): #abre um popup com a string "message" como corpo
     print("Abrindo popup")
-    pop = tk.Toplevel(root)
-    pop.title("Meu popup!!")
-    pop.geometry("250x150")
-    pop.config(bg="#b3b3b3")
-    alert = tk.Label(pop, text="abrindo popup")
-    button1 = tk.Button(pop, text="Ok", command = pop.destroy)
-    alert.pack()
+
+    pop = tk.Toplevel()
+    pop.title("Predição")
+    pop.geometry("330x120")
+    pop.config(bg="#ffffff")
+    corpo = tk.Label(pop, text=message) #usa uma label para escrever o conteúdo do popup
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy) #botão para fechar o popup
+    corpo.pack()
     button1.pack()
 
     pop.mainloop()
@@ -472,11 +474,6 @@ menu.add_cascade(label="Classificadores", menu=classif_menu)
 classif_menu.add_command(label="SVM", command=svm)
 classif_menu.add_command(label="XGBoost", command=xgboost)
 classif_menu.add_command(label="VGG16", command=vgg)
-
-#teste
-teste_menu = tk.Menu(menu)
-menu.add_cascade(label="TESTE", menu=teste_menu)
-teste_menu.add_command(label="Popup", command=popup)
 
 #imagem inicial
 imagem = Image.open('vazio.png')
