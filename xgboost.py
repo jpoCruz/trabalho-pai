@@ -7,7 +7,6 @@ import random
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import specifity_score
 from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
@@ -207,7 +206,6 @@ def treinoXGBoost():
     print("Prediction is: ", prediction)
     print(metrics.classification_report(y_test, prediction))
     print(confusion_matrix(y_test, prediction))
-    print("Especificidade: ", specifity_score(y_test, prediction))
     print("Acuracia: ", model.score(X_test, y_test))
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
@@ -449,7 +447,6 @@ def treinoXGBoost_Binario():
     print("Prediction is: ", prediction)
     print(metrics.classification_report(y_test, prediction))
     print(confusion_matrix(y_test, prediction))
-    print("Especificidade: ", specifity_score(y_test, prediction))
     print("Acuracia: ", model.score(X_test, y_test))
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
