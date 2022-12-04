@@ -357,7 +357,20 @@ def classificar_binaria():
     start_time = time.time()
 
     if(var_vgg16):
-        pass
+        img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+        img = cv2.equalizeHist(img)
+        img = cv2.resize(img,(32,32))
+        img = np.array(img)
+        img = np.expand_dims(img,axis=0)
+        img = np.expand_dims(img,axis=3)
+        img = np.repeat(img,3,axis=3)
+        print(img.shape)
+        model = tf.keras.models.load_model('Vgg16.h5')
+        prediction=model.predict(img)
+        if(np.argmax(prediction)<=1):
+            print('0')
+        else:
+            print('1')
         
     elif(var_svm):
         if file:
