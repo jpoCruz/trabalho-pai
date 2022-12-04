@@ -13,18 +13,34 @@ from tkinter import filedialog
 from pathlib import Path
 import tkinter as tk
 
-def popupInfo(message):
-    window = tk.Tk()
-    window.columnconfigure(0, minsize=250)
-    window.rowconfigure([0, 1], minsize=100)
 
-    label1 = tk.Label(text=message)
-    label1.grid(row=0, column=0)
+def popupInfo(message): #abre um popup com a string "message" como corpo
+    print("Abrindo popup")
 
-    label2 = tk.Label(text="B")
-    label2.grid(row=1, column=0)
+    pop = tk.Toplevel()
+    pop.title("Métricas")
+    pop.geometry("330x380")
+    pop.config(bg="#ffffff")
+    corpo = tk.Label(pop, text=message) #usa uma label para escrever o conteúdo do popup
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy) #botão para fechar o popup
+    corpo.pack()
+    button1.pack()
 
-    window.mainloop()
+    pop.mainloop()
+
+def popupSmall(message): #abre um popup com a string "message" como corpo
+    print("Abrindo popup")
+
+    pop = tk.Toplevel()
+    pop.title("Predição")
+    pop.geometry("330x120")
+    pop.config(bg="#ffffff")
+    corpo = tk.Label(pop, text=message) #usa uma label para escrever o conteúdo do popup
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy) #botão para fechar o popup
+    corpo.pack()
+    button1.pack()
+
+    pop.mainloop()
 
 
 def treinoSVM():
@@ -35,6 +51,7 @@ def treinoSVM():
 
     #escolhendo pastas de treino
 
+    '''
     file_caminho_dir1 = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     file_caminho_dir1 = Path(file_caminho_dir1).parent.parent #escolhendo a imagem, recebe-se a pasta de categorias de imagens (224, 224)
 
@@ -124,6 +141,7 @@ def treinoSVM():
     pick_model = open('model.h5', 'wb')
     pickle.dump(model, pick_model)
     pick_model.close()
+    '''
 
     ########## TESTE ##########
 
@@ -207,7 +225,7 @@ def treinoSVM():
                 pass
 
     #separação dos dados de treino
-    X_train, X_test, y_train, y_test = train_test_split(features_teste, labels_teste, test_size = 0.98)
+    X_train, X_test, y_train, y_test = train_test_split(features_teste, labels_teste, test_size = 0.01)
 
     #modelo sendo carregado
     pick_model_treinado = open('model.h5', 'rb')
@@ -216,12 +234,14 @@ def treinoSVM():
 
     #métricas do modelo
     prediction = model.predict(X_test)
-    print("Prediction is: ", prediction)
-    print(metrics.classification_report(y_test, prediction))
-    print(confusion_matrix(y_test, prediction))
-    print("Acuracia: ", model.score(X_test, y_test))
 
-    popupInfo(model.score(X_test, y_test))
+    report = metrics.classification_report(y_test, prediction)
+    cmatrix = confusion_matrix(y_test, prediction)
+    acuracia = model.score(X_test, y_test)
+
+    mensagem = ("\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\n")
+
+    popupInfo(mensagem)
 
 
 
@@ -240,7 +260,9 @@ def classificarSVM(file):
     #predição de classe da imagem selecionada 
     prediction = model.predict(img_recortada.reshape(1, -1))
 
-    print("Prediction is: ", prediction)
+    mensagem = "\nClasse [" + str(prediction) + "]\n"
+
+    popupSmall(mensagem)
 
 
 
@@ -253,7 +275,7 @@ def treinoSVM_Binario():
     categories = ['0', '1', '2', '3', '4'] #categorias de osteoartrite
     data = [] #dados para o dataset
 
-    '''
+    
     #escolhendo pastas de treino
     file_caminho_dir1 = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     file_caminho_dir1 = Path(file_caminho_dir1).parent.parent #escolhendo a imagem, recebe-se a pasta de categorias de imagens (224, 224)
@@ -348,7 +370,7 @@ def treinoSVM_Binario():
     pick_model = open('model_binario.h5', 'wb')
     pickle.dump(model, pick_model)
     pick_model.close()
-    '''
+    
 
     #####Teste#####
 
@@ -462,16 +484,18 @@ def treinoSVM_Binario():
 
     #métricas do modelo
     prediction = model.predict(X_test)
-    print("Prediction is: ", prediction)
-    print(metrics.classification_report(y_test, prediction))
 
-    confusion = confusion_matrix(y_test, prediction)
-    print(confusion_matrix(y_test, prediction))
+    report = metrics.classification_report(y_test, prediction)
+    cmatrix = confusion_matrix(y_test, prediction)
+    acuracia = model.score(X_test, y_test)
+    specifity = cmatrix[1, 1]/(cmatrix[1, 0]+cmatrix[1, 1])
 
-    specifity = confusion[1, 1]/(confusion[1, 0]+confusion[1, 1])
-    print("Especificidade: ", specifity)
+    mensagem = ("\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\nEspecificidade: " + str(specifity) + "\n")
 
-    print("Acuracia: ", model.score(X_test, y_test))
+    popupInfo(mensagem)
+
+    
+
 
 
 
@@ -491,4 +515,6 @@ def classificarSVM_Binario(file):
     #predição de classe da imagem selecionada 
     prediction = model.predict(img_recortada.reshape(1, -1))
 
-    print("Prediction is: ", prediction)
+    mensagem = "\nClasse [" + str(prediction) + "]\n"
+
+    popupSmall(mensagem)

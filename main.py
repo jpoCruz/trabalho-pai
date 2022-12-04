@@ -413,13 +413,13 @@ def vgg():
     print("VGG16 Escolhido!")
 
 
-def popup(mensagem):
+def popup():
     print("Abrindo popup")
     pop = tk.Toplevel(root)
     pop.title("Meu popup!!")
     pop.geometry("250x150")
     pop.config(bg="#b3b3b3")
-    alert = tk.Label(pop, text=mensagem)
+    alert = tk.Label(pop, text="abrindo popup")
     button1 = tk.Button(pop, text="Ok", command = pop.destroy)
     alert.pack()
     button1.pack()

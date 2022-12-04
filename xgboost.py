@@ -12,6 +12,36 @@ from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
 import xgboost as xgb
+import tkinter as tk
+
+def popupInfo(message): #abre um popup com a string "message" como corpo
+    print("Abrindo popup")
+
+    pop = tk.Toplevel()
+    pop.title("Métricas")
+    pop.geometry("330x380")
+    pop.config(bg="#ffffff")
+    corpo = tk.Label(pop, text=message) #usa uma label para escrever o conteúdo do popup
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy) #botão para fechar o popup
+    corpo.pack()
+    button1.pack()
+
+    pop.mainloop()
+
+
+def popupSmall(message): #abre um popup com a string "message" como corpo
+    print("Abrindo popup")
+
+    pop = tk.Toplevel()
+    pop.title("Predição")
+    pop.geometry("330x120")
+    pop.config(bg="#ffffff")
+    corpo = tk.Label(pop, text=message) #usa uma label para escrever o conteúdo do popup
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy) #botão para fechar o popup
+    corpo.pack()
+    button1.pack()
+
+    pop.mainloop()
 
 def treinoXGBoost():
 
@@ -202,10 +232,14 @@ def treinoXGBoost():
 
     #métricas do modelo
     prediction = model.predict(X_test)
-    print("Prediction is: ", prediction)
-    print(metrics.classification_report(y_test, prediction))
-    print(confusion_matrix(y_test, prediction))
-    print("Acuracia: ", model.score(X_test, y_test))
+
+    report = metrics.classification_report(y_test, prediction)
+    cmatrix = confusion_matrix(y_test, prediction)
+    acuracia = model.score(X_test, y_test)
+
+    mensagem = ("\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\n")
+
+    popupInfo(mensagem)
 
 
 
@@ -224,7 +258,10 @@ def classificarXGBoost(file):
     #predição de classe da imagem selecionada 
     prediction = model.predict(img_recortada.reshape(1, -1))
 
-    print("Prediction is: ", prediction)
+    mensagem = "\nClasse [" + str(prediction) + "]\n"
+
+    popupSmall(mensagem)
+
 
 
 
@@ -447,16 +484,15 @@ def treinoXGBoost_Binario():
 
     #métricas do modelo
     prediction = model.predict(X_test)
-    print("Prediction is: ", prediction)
-    print(metrics.classification_report(y_test, prediction))
 
-    confusion = confusion_matrix(y_test, prediction)
-    print(confusion_matrix(y_test, prediction))
+    report = metrics.classification_report(y_test, prediction)
+    cmatrix = confusion_matrix(y_test, prediction)
+    acuracia = model.score(X_test, y_test)
+    specifity = cmatrix[1, 1]/(cmatrix[1, 0]+cmatrix[1, 1])
 
-    specifity = confusion[1, 1]/(confusion[1, 0]+confusion[1, 1])
-    print("Especificidade: ", specifity)
+    mensagem = ("\n" + report + "\nMatriz de confusão:\n" + str(cmatrix) + "\nAcurácia: " + str(acuracia) + "\nEspecificidade: " + str(specifity) + "\n")
 
-    print("Acuracia: ", model.score(X_test, y_test))
+    popupInfo(mensagem)
 
 
 
@@ -477,4 +513,7 @@ def classificarXGBoost_Binario(file):
     #predição de classe da imagem selecionada 
     prediction = model.predict(img_recortada.reshape(1, -1))
 
-    print("Prediction is: ", prediction)
+    mensagem = "\nClasse [" + str(prediction) + "]\n"
+
+    popupSmall(mensagem)
+
