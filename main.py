@@ -424,6 +424,21 @@ def vgg():
     var_vgg16 = True
 
     print("VGG16 Escolhido!")
+
+
+def popup():
+    print("Abrindo popup")
+    pop = tk.Toplevel(root)
+    pop.title("Meu popup!!")
+    pop.geometry("250x150")
+    pop.config(bg="#b3b3b3")
+    alert = tk.Label(pop, text="Ta funcionando?")
+    button1 = tk.Button(pop, text="Ok", command = pop.destroy)
+    alert.pack()
+    button1.pack()
+
+    pop.mainloop()
+
 #################################### INTERFACE ####################################
 
 
@@ -457,6 +472,11 @@ menu.add_cascade(label="Classificadores", menu=classif_menu)
 classif_menu.add_command(label="SVM", command=svm)
 classif_menu.add_command(label="XGBoost", command=xgboost)
 classif_menu.add_command(label="VGG16", command=vgg)
+
+#teste
+teste_menu = tk.Menu(menu)
+menu.add_cascade(label="TESTE", menu=teste_menu)
+teste_menu.add_command(label="Popup", command=popup)
 
 #imagem inicial
 imagem = Image.open('vazio.png')
