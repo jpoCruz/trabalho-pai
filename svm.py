@@ -11,6 +11,21 @@ from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
+import tkinter as tk
+
+def popupInfo(message):
+    window = tk.Tk()
+    window.columnconfigure(0, minsize=250)
+    window.rowconfigure([0, 1], minsize=100)
+
+    label1 = tk.Label(text=message)
+    label1.grid(row=0, column=0)
+
+    label2 = tk.Label(text="B")
+    label2.grid(row=1, column=0)
+
+    window.mainloop()
+
 
 def treinoSVM():
 
@@ -206,7 +221,8 @@ def treinoSVM():
     print(confusion_matrix(y_test, prediction))
     print("Acuracia: ", model.score(X_test, y_test))
 
-    sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
+    popupInfo(model.score(X_test, y_test))
+
 
 
 def classificarSVM(file):
@@ -237,7 +253,7 @@ def treinoSVM_Binario():
     categories = ['0', '1', '2', '3', '4'] #categorias de osteoartrite
     data = [] #dados para o dataset
 
-
+    '''
     #escolhendo pastas de treino
     file_caminho_dir1 = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
     file_caminho_dir1 = Path(file_caminho_dir1).parent.parent #escolhendo a imagem, recebe-se a pasta de categorias de imagens (224, 224)
@@ -332,8 +348,7 @@ def treinoSVM_Binario():
     pick_model = open('model_binario.h5', 'wb')
     pickle.dump(model, pick_model)
     pick_model.close()
-
-
+    '''
 
     #####Teste#####
 
@@ -437,7 +452,7 @@ def treinoSVM_Binario():
 
         
     #separação dos dados de treino
-    X_train, X_test, y_train, y_test = train_test_split(features_teste, labels_teste, test_size = 0.98)
+    X_train, X_test, y_train, y_test = train_test_split(features_teste, labels_teste, test_size = 0.01)
 
 
     #modelo sendo carregado
@@ -457,8 +472,6 @@ def treinoSVM_Binario():
     print("Especificidade: ", specifity)
 
     print("Acuracia: ", model.score(X_test, y_test))
-
-    sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
 
 
 

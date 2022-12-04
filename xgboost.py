@@ -207,7 +207,6 @@ def treinoXGBoost():
     print(confusion_matrix(y_test, prediction))
     print("Acuracia: ", model.score(X_test, y_test))
 
-    sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
 
 
 def classificarXGBoost(file):
@@ -459,7 +458,6 @@ def treinoXGBoost_Binario():
 
     print("Acuracia: ", model.score(X_test, y_test))
 
-    sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
 
 
 
