@@ -6,10 +6,10 @@ import os #para interagir com o resto da máquina
 from pathlib import Path #para administrar caminhos
 from pynput import mouse #para usar o mouse e cliques
 import cv2 #biblioteca de computer vision (recorte, match template)
-from VGG16 import trainVGG, load_data
-from treino_svm import treinoSVM
-from teste_svm import testeSVM
-from classificar_svm import classificarSVM
+from util import load_data
+from VGG16 import trainVGG
+from svm import treinoSVM, treinoSVM_Binario, classificarSVM, classificarSVM_Binario
+from xgboost import treinoXGBoost, treinoXGBoost_Binario, classificarXGBoost, classificarXGBoost_Binario
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -30,7 +30,7 @@ import time #marcar tempo de execução
 
 root = tk.Tk()
 root.resizable(False,False)
-root.title('Diagnóstico Automático de da Osteoartrite Femorotibial')
+root.title('Diagnóstico Automático de Osteoartrite Femorotibial')
 root.iconbitmap("icon.ico")
 canvas = tk.Canvas(root, width=576, height=384)
 canvas.grid(columnspan=3, rowspan=3)
@@ -224,28 +224,59 @@ def recorte():
 def escolher_caminho():
     print("[!] Entrando no método de seleção de caminho")
 
-    global caminho_teste #!!
-    global caminho_treino #!!
-    global caminho_val #!!
+    global caminho_teste224 #!!
+    global caminho_treino224 #!!
+    global caminho_val224 #!!
+    global caminho_teste299 #!!
+    global caminho_treino299 #!!
+    global caminho_val299 #!!
+
+    #leitura de caminhos das imagens (224, 224)
 
     file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de teste", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
-    caminho_teste = Path(file_caminho).parent.parent
+    caminho_teste224 = Path(file_caminho).parent.parent
     print("- Novo caminho de teste salvo: ")
-    print(caminho_teste)
+    print(caminho_teste224)
     #print(caminho_teste.stem)
     print("")
 
     file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
-    caminho_treino = Path(file_caminho).parent.parent
+    caminho_treino224 = Path(file_caminho).parent.parent
     print("- Novo caminho de treino salvo: ")
-    print(caminho_treino)
+    print(caminho_treino224)
     #print(caminho_treino.stem)
     print("")
 
     file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de validação", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
-    caminho_val = Path(file_caminho).parent.parent
+    caminho_val224 = Path(file_caminho).parent.parent
     print("- Novo caminho de validação salvo: ")
-    print(caminho_val)
+    print(caminho_val224)
+    #print(caminho_val.stem)
+    print("")
+
+
+
+
+    #leitura de caminhos das imagens (299, 299)
+
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de teste", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    caminho_teste99 = Path(file_caminho).parent.parent
+    print("- Novo caminho de teste salvo: ")
+    print(caminho_teste299)
+    #print(caminho_teste.stem)
+    print("")
+
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de treino", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    caminho_treino299 = Path(file_caminho).parent.parent
+    print("- Novo caminho de treino salvo: ")
+    print(caminho_treino299)
+    #print(caminho_treino.stem)
+    print("")
+
+    file_caminho = filedialog.askopenfilename(initialdir=os.getcwd(), title = "Escolha uma imagem da pasta de validação", filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg"), ("All Files", "*.*")))
+    caminho_val299 = Path(file_caminho).parent.parent
+    print("- Novo caminho de validação salvo: ")
+    print(caminho_val299)
     #print(caminho_val.stem)
     print("")
 
@@ -258,25 +289,23 @@ def treinar_classificador():
     start_time = time.time()
 
     if(var_vgg16):
-        #carrega os valores do dataset 
-        x_train, y_train = load_data(caminho_treino,caminho_treino)
-        x_test, y_test = load_data(caminho_teste,caminho_teste)
-        #adequa as dimensões dos dos do dataset à entrada da rede
+    
+        x_train, y_train = load_data(caminho_treino224, caminho_treino299)
+        x_test, y_test = load_data(caminho_teste224, caminho_teste299)
+
         x_train=np.expand_dims(x_train,axis=3)
         x_test=np.expand_dims(x_test,axis=3)
         x_train=np.repeat(x_train,3,axis=3)
         x_test=np.repeat(x_test,3,axis=3)
-        #chamada ao método de treinamento do modelo
+
         trainVGG(x_train,x_test,y_train,y_test)
     
     elif(var_svm):
         treinoSVM()
-        testeSVM()
-        pass
         
 
     elif(var_xgboost):
-        pass
+        treinoXGBoost()
 
     else:
         print("Nenhum classificador foi selecionado")
@@ -306,18 +335,48 @@ def classificar_imagem():
             print(np.argmax(prediction))#Mudar para output gráfico
         
     elif(var_svm):
-        classificarSVM()
+        if file:
+            classificarSVM(file)
+        else :
+            print("Imagem não foi carregada!")
 
     elif(var_xgboost):
-        pass
+        if file:
+            classificarXGBoost(file)
+        else :
+            print("Imagem não foi carregada!")
             
 
     print("--- %s seconds ---" % (time.time() - start_time))
     print("[!] Fim do método de classificar imagem")
     print("\n")
 
+
+
 def classificar_binaria():
-    pass
+    print("[!] Entrando no método de classificação binária")
+
+    start_time = time.time()
+
+    if(var_vgg16):
+        pass
+        
+    elif(var_svm):
+        if file:
+            classificarSVM_Binario(file)
+        else :
+            print("Imagem não foi carregada!")
+
+    elif(var_xgboost):
+        if file:
+            classificarXGBoost_Binario(file)
+        else :
+            print("Imagem não foi carregada!")
+            
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+    print("[!] Fim do método de classificação binária")
+    print("\n")
 
 def svm():
     global var_svm
