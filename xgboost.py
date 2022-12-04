@@ -11,19 +11,8 @@ from sklearn import metrics
 from skimage import filters
 from tkinter import filedialog
 from pathlib import Path
+import seaborn as sns
 import xgboost as xgb
-
-#
-# Ciência da Computação PUC Minas
-# Campus Coração Eucarístico
-#
-# Trabalho Final de Processamento e Análise de Imagens
-# Entrega Final
-#
-# Iago Morgado - 618090
-# João Paulo Oliveira Cruz - 615932
-# Pedro Rodrigues - 594451
-#
 
 def treinoXGBoost():
 
@@ -221,6 +210,7 @@ def treinoXGBoost():
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
 
+
 def classificarXGBoost(file):
 
     img = cv2.imread(file, 0) #imagem lida em tons de cinza
@@ -237,6 +227,10 @@ def classificarXGBoost(file):
     prediction = model.predict(img_recortada.reshape(1, -1))
 
     print("Prediction is: ", prediction)
+
+
+
+
 
 def treinoXGBoost_Binario():
 
@@ -457,10 +451,19 @@ def treinoXGBoost_Binario():
     prediction = model.predict(X_test)
     print("Prediction is: ", prediction)
     print(metrics.classification_report(y_test, prediction))
+
+    confusion = confusion_matrix(y_test, prediction)
     print(confusion_matrix(y_test, prediction))
+
+    specifity = confusion[1, 1]/(confusion[1, 0]+confusion[1, 1])
+    print("Especificidade: ", specifity)
+
     print("Acuracia: ", model.score(X_test, y_test))
 
     sns.regplot(y_test, prediction, fit_reg=True, scatter_kws={"s": 100})
+
+
+
 
 def classificarXGBoost_Binario(file):
         
