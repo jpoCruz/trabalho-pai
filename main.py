@@ -386,10 +386,15 @@ def classificar_binaria():
         print(img.shape)
         model = tf.keras.models.load_model('Vgg16.h5')
         prediction=model.predict(img)
+
         if(np.argmax(prediction)<=1):
             print('0')
+            mensagem = "\nSem osteoartrite [Classe 0]\n"
         else:
             print('1')
+            mensagem = "\nCom osteoartrite [Classe 1]\n"
+
+        popupSmall(mensagem)
         
     elif(var_svm):
         if file:
